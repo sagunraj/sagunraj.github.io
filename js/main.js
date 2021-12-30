@@ -1,79 +1,29 @@
+// Wait for the document to load before running the script 
+(function($) {
 
-(function ($) {
-    "use strict";
+    // We use some Javascript and the URL #fragment to hide/show different parts of the page
+    // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#Linking_to_an_element_on_the_same_page
+    $(window).on('load hashchange', function() {
 
-    /*==================================================================
-    [ Validate ]*/
-    var input = $('.validate-input .input100');
+        // First hide all content regions, then show the content-region specified in the URL hash 
+        // (or if no hash URL is found, default to first menu item)
+        $('.content-region').hide();
 
-    $('.validate-form').on('submit',function(){
-        var check = true;
+        // Remove any active classes on the main-menu
+        $('.main-menu a').removeClass('active');
+        var region = location.hash.toString() || $('.main-menu a:first').attr('href');
 
-        for(var i=0; i<input.length; i++) {
-            if(validate(input[i]) == false){
-                showValidate(input[i]);
-                check=false;
-            }
-        }
+        // Now show the region specified in the URL hash
+        $(region).show();
 
-        return check;
+        // Highlight the menu link associated with this region by adding the .active CSS class
+        $('.main-menu a[href="' + region + '"]').addClass('active');
+
+        // Alternate method: Use AJAX to load the contents of an external file into a div based on URL fragment
+        // This will extract the region name from URL hash, and then load [region].html into the main #content div
+        // var region = location.hash.toString() || '#first';
+        // $('#content').load(region.slice(1) + '.html')
+
     });
-
-
-    $('.validate-form .input100').each(function(){
-        $(this).focus(function(){
-           hideValidate(this);
-        });
-    });
-
-    function validate (input) {
-        if($(input).attr('type') == 'email' || $(input).attr('name') == 'email') {
-            if($(input).val().trim().match(/^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{1,5}|[0-9]{1,3})(\]?)$/) == null) {
-                return false;
-            }
-        }
-        else {
-            if($(input).val().trim() == ''){
-                return false;
-            }
-        }
-    }
-
-    function showValidate(input) {
-        var thisAlert = $(input).parent();
-
-        $(thisAlert).addClass('alert-validate');
-    }
-
-    function hideValidate(input) {
-        var thisAlert = $(input).parent();
-
-        $(thisAlert).removeClass('alert-validate');
-    }
-
-    
-    
-    /*==================================================================
-    [ Simple slide100 ]*/
-
-    $('.simpleslide100').each(function(){
-        var delay = 7000;
-        var speed = 1000;
-        var itemSlide = $(this).find('.simpleslide100-item');
-        var nowSlide = 0;
-
-        $(itemSlide).hide();
-        $(itemSlide[nowSlide]).show();
-        nowSlide++;
-        if(nowSlide >= itemSlide.length) {nowSlide = 0;}
-
-        setInterval(function(){
-            $(itemSlide).fadeOut(speed);
-            $(itemSlide[nowSlide]).fadeIn(speed);
-            nowSlide++;
-            if(nowSlide >= itemSlide.length) {nowSlide = 0;}
-        },delay);
-    });
-
 
 })(jQuery);
